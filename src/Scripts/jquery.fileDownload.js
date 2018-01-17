@@ -113,6 +113,11 @@ $.extend({
             cookieName: "fileDownload",
 
             //
+            //the cookie name to indicate if a file download has failed
+            //
+            cookieNameFail: "fileDownloadFailReason",
+
+            //
             //the cookie value for the above name to indicate that a file download has occured
             //
             cookieValue: "true",
@@ -379,6 +384,18 @@ $.extend({
                 return;
             }
 
+            if (settings.cookieNameFail) {
+                var failReason = getCookie(settings.cookieNameFail);
+                if (failReason) {
+                    setTimeout(function () {
+                        internalCallbacks.onFail('', fileUrl, failReason);
+                        cleanUp(true);
+                    }, 100);
+
+                    return;
+                }
+            }
+
             //has an error occured?
             //if neither containers exist below then the file download is occuring on the current window
             if (downloadWindow || $iframe) {
@@ -472,6 +489,12 @@ $.extend({
                 //}
 
             }, 0);
+        }
+
+        function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length == 2) return parts.pop().split(";").shift();
         }
 
 
