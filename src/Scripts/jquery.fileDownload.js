@@ -1,5 +1,5 @@
 /*
-* jQuery File Download Plugin v1.4.9
+* jQuery File Download Plugin v1.4.10
 *
 * http://www.johnculviner.com
 *
@@ -366,7 +366,7 @@ $.extend({
                 cookieValue = cookieValue.toLowerCase();
             }
 
-            var cookieValueFail = settings.cookieValue;
+            var cookieValueFail = settings.cookieValueFail;
             if(typeof cookieValueFail == 'string') {
                 cookieValueFail = cookieValueFail.toLowerCase();
             }
