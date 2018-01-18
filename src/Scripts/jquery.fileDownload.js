@@ -1,5 +1,5 @@
 /*
-* jQuery File Download Plugin v1.4.5
+* jQuery File Download Plugin v1.4.9
 *
 * http://www.johnculviner.com
 *
@@ -113,9 +113,9 @@ $.extend({
             cookieName: "fileDownload",
 
             //
-            //the cookie name to indicate if a file download has failed
+            //the cookie value for the above name to indicate that a file download has failed
             //
-            cookieNameFail: "fileDownloadFailReason",
+            cookieValueFail: "false",
 
             //
             //the cookie value for the above name to indicate that a file download has occured
@@ -366,7 +366,13 @@ $.extend({
                 cookieValue = cookieValue.toLowerCase();
             }
 
+            var cookieValueFail = settings.cookieValue;
+            if(typeof cookieValueFail == 'string') {
+                cookieValueFail = cookieValueFail.toLowerCase();
+            }
+
             var lowerCaseCookie = settings.cookieName.toLowerCase() + "=" + cookieValue;
+            var lowerCaseCookieFail = settings.cookieName.toLowerCase() + "=" + cookieValueFail;
 
             if (document.cookie.toLowerCase().indexOf(lowerCaseCookie) > -1) {
 
@@ -384,16 +390,13 @@ $.extend({
                 return;
             }
 
-            if (settings.cookieNameFail) {
-                var failReason = getCookie(settings.cookieNameFail);
-                if (failReason) {
-                    setTimeout(function () {
-                        internalCallbacks.onFail('', fileUrl, failReason);
-                        cleanUp(true);
-                    }, 100);
+            if (document.cookie.toLowerCase().indexOf(lowerCaseCookieFail) > -1) {
+                setTimeout(function () {
+                    internalCallbacks.onFail('', fileUrl, 'Server returned an error');
+                    cleanUp(true);
+                }, 100);
 
-                    return;
-                }
+                return;
             }
 
             //has an error occured?
@@ -490,13 +493,6 @@ $.extend({
 
             }, 0);
         }
-
-        function getCookie(name) {
-            var value = "; " + document.cookie;
-            var parts = value.split("; " + name + "=");
-            if (parts.length == 2) return parts.pop().split(";").shift();
-        }
-
 
         function htmlSpecialCharsEntityEncode(str) {
             return str.replace(htmlSpecialCharsRegEx, function(match) {
